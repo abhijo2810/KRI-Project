@@ -12,7 +12,7 @@ OUT_FILE = CSV_DIR / "kelp_metrics_master.csv"
 files = {
     "area_lightness": CSV_DIR / "area_lightness.csv",
     "fraying": CSV_DIR / "fraying.csv",
-    "bry_unsup": CSV_DIR / "bry_unsup.csv"
+    "bry_fast": CSV_DIR / "bryozoan_fast_metrics.csv",
 }
 
 dfs = {}

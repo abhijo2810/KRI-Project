@@ -5,7 +5,11 @@ from skimage import measure, morphology
 # ---------- Paths ----------
 SCRIPT_DIR = Path(__file__).resolve().parent
 ROOT = SCRIPT_DIR.parent
-IN_DIR = ROOT / "data" / "raw"
+
+BATCH_NAME = "bryozoan_batch_01"
+IN_DIR = ROOT / "data" / "raw_for_annot" / BATCH_NAME
+MASK_DIR = ROOT / "data" / "processed_annot" / BATCH_NAME / "blade_masks"
+
 CSV_DIR = ROOT / "outputs" / "csv"
 CSV_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -13,6 +17,13 @@ EXTS = {".jpg", ".jpeg", ".png", ".tif", ".tiff", ".bmp"}
 paths = sorted([p for p in IN_DIR.iterdir() if p.suffix.lower() in EXTS])
 
 # ---------- Reuse segmentation ----------
+def load_blade_mask(mask_dir: Path, stem: str) -> np.ndarray:
+    p = mask_dir / f"{stem}_blade_mask.png"
+    m = cv2.imread(str(p), cv2.IMREAD_GRAYSCALE)
+    if m is None:
+        raise FileNotFoundError(f"Missing blade mask: {p}")
+    return (m > 0).astype(np.uint8) * 255
+
 def segment_blade(img_bgr):
     gray = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2GRAY)
     gray = cv2.medianBlur(gray, 3)
@@ -60,9 +71,15 @@ for p in paths:
     if img is None:
         print(f"[warn] unreadable: {p.name}")
         continue
-    mask = segment_blade(img)
+   
+    try:
+        mask = load_blade_mask(MASK_DIR, p.stem)
+    except Exception as e:
+        print(f"[warn] skipping {p.name}: {e}")
+        continue
+
     rows.append({
-        "image": p.name,
+        "image": p.stem,
         "roughness": roughness(mask),
         "rim_edge_density": rim_edge_density(img, mask, rim_px=8),
         "micro_holes": micro_holes(mask)

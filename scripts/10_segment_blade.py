@@ -8,9 +8,16 @@ import pandas as pd
 # ---------- Paths ----------
 SCRIPT_DIR = Path(__file__).resolve().parent
 ROOT = SCRIPT_DIR.parent
-IN_DIR = ROOT / "data" / "raw"
+
+BATCH_NAME = "bryozoan_batch_01"
+
+IN_DIR = ROOT / "data" / "raw_for_annot" / BATCH_NAME
+MASK_DIR = ROOT / "data" / "processed_annot" / BATCH_NAME / "blade_masks"
+
 OVERLAY_DIR = ROOT / "outputs" / "overlays"
 CSV_DIR = ROOT / "outputs" / "csv"
+
+MASK_DIR.mkdir(parents=True, exist_ok=True)
 OVERLAY_DIR.mkdir(parents=True, exist_ok=True)
 CSV_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -35,7 +42,9 @@ def crop_fixed(img, pad=80):
 def segment_all_blades(img_bgr):
 
     # 1. Hard-crop borders (stable)
-    img = crop_fixed(img_bgr, pad=80)
+    # 1. No crop (keep mask aligned with original image)
+    img = img_bgr
+
 
     # 2. Convert to HSV for color segmentation
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
@@ -92,6 +101,7 @@ for p in paths:
 
     # segment blades
     mask = segment_all_blades(img)
+    cv2.imwrite(str(MASK_DIR / f"{p.stem}_blade_mask.png"), mask)
     contours = find_all_blade_contours(mask)
 
     # draw outlines

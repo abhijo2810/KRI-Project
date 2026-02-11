@@ -9,9 +9,13 @@ from skimage import measure, morphology
 # ---------- Paths ----------
 SCRIPT_DIR = Path(__file__).resolve().parent
 ROOT = SCRIPT_DIR.parent
-IN_DIR = ROOT / "data" / "raw"
+BATCH_NAME = "bryozoan_batch_01"
+IN_DIR = ROOT / "data" / "raw_for_annot" / BATCH_NAME
+MASK_DIR = ROOT / "data" / "processed_annot" / BATCH_NAME / "blade_masks"
+
 OVERLAY_DIR = ROOT / "outputs" / "overlays"
 CSV_DIR = ROOT / "outputs" / "csv"
+
 CALIB_PATH = ROOT / "data" / "calibration.json"
 OVERLAY_DIR.mkdir(parents=True, exist_ok=True)
 CSV_DIR.mkdir(parents=True, exist_ok=True)
@@ -20,6 +24,14 @@ EXTS = {".jpg", ".jpeg", ".png", ".tif", ".tiff", ".bmp"}
 paths = sorted([p for p in IN_DIR.iterdir() if p.suffix.lower() in EXTS])
 
 # ---------- Calibration ----------
+
+def load_blade_mask(mask_dir: Path, stem: str) -> np.ndarray:
+    p = mask_dir / f"{stem}_blade_mask.png"
+    m = cv2.imread(str(p), cv2.IMREAD_GRAYSCALE)
+    if m is None:
+        raise FileNotFoundError(f"Missing blade mask: {p}")
+    return (m > 0).astype(np.uint8) * 255
+
 
 def load_pixels_per_mm(calib_path, fallback=4.0):
     try:
@@ -89,7 +101,12 @@ for p in paths:
         print(f"[warn] unreadable: {p.name}")
         continue
 
-    mask = segment_blade(img)
+    try:
+        mask = load_blade_mask(MASK_DIR, p.stem)
+    except Exception as e:
+        print(f"[warn] skipping {p.name}: {e}")
+        continue
+
     cnt, area_px = contour_and_area(mask)
     area_cm2 = px_area_to_cm2(area_px, PIXELS_PER_MM)
 
@@ -102,7 +119,7 @@ for p in paths:
     cv2.imwrite(str(OVERLAY_DIR / f"{p.stem}_seg.png"), overlay)
 
     rows.append({
-        "image": p.name,
+        "image": p.stem,
         "area_px": area_px,
         "area_cm2": area_cm2,
         "L_mean": L_mean,
