@@ -1,0 +1,14 @@
+# Core image processing
+opencv-python>=4.8
+numpy>=1.24
+scikit-image>=0.21
+pandas>=2.0
+
+# Deep learning (CPU or MPS on Apple Silicon)
+torch>=2.1
+torchvision>=0.16
+
+# Reproducibility note:
+# Tested on Python 3.10 with the above minimum versions.
+# For an exact environment snapshot, run:
+#   pip freeze > requirements-frozen.txt

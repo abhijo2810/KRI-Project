@@ -1,0 +1,42 @@
+{
+  "mean_val_dice": 0.7497,
+  "std_val_dice": 0.1931,
+  "mean_val_iou": 0.671,
+  "std_val_iou": 0.2024,
+  "mean_optimal_threshold": 0.62,
+  "cover_pearson_r": 0.8483,
+  "cover_spearman_rho": 0.9164,
+  "bland_altman_bias": 12.622,
+  "per_fold": [
+    {
+      "fold": 0,
+      "dice": 0.9196,
+      "iou": 0.8611,
+      "opt_thr": 0.1
+    },
+    {
+      "fold": 1,
+      "dice": 0.9034,
+      "iou": 0.833,
+      "opt_thr": 0.9
+    },
+    {
+      "fold": 2,
+      "dice": 0.7955,
+      "iou": 0.7202,
+      "opt_thr": 0.9
+    },
+    {
+      "fold": 3,
+      "dice": 0.3866,
+      "iou": 0.2977,
+      "opt_thr": 0.3
+    },
+    {
+      "fold": 4,
+      "dice": 0.7435,
+      "iou": 0.6432,
+      "opt_thr": 0.9
+    }
+  ]
+}

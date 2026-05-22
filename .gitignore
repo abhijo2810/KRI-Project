@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Data and model weights (large binary files — share via separate storage)
+data/raw/
+data/raw_for_annot/
+models/*.pt
+models/*.pth
+
+# Generated outputs (reproducible from pipeline)
+outputs/overlays/
+outputs/overlays_bry_fast/
+outputs/overlays_ml_infer/
+
+# Editors
+.vscode/
+.idea/
+*.swp

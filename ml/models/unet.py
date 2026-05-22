@@ -16,6 +16,8 @@ class DoubleConv(nn.Module):
     def forward(self, x): return self.net(x)
 
 class UNetSmall(nn.Module):
+    # Input spatial dimensions must be divisible by 8 (3 max-pool stages).
+    # The default training size of 512 satisfies this requirement.
     def __init__(self, in_channels=3, out_channels=1, base=32):
         super().__init__()
         self.d1 = DoubleConv(in_channels, base)

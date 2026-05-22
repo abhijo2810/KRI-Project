@@ -1,0 +1,14 @@
+{
+  "model_type": "smp_resnet18",
+  "epochs": 60,
+  "lr": 0.001,
+  "batch_size": 2,
+  "input_size": 512,
+  "imagenet_norm": true,
+  "use_clahe": false,
+  "n_folds": 5,
+  "tversky_alpha": 0.3,
+  "tversky_beta": 0.7,
+  "tversky_gamma": 0.75,
+  "loss_type": "focal_tversky"
+}
